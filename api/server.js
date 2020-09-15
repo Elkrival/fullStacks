@@ -5,7 +5,10 @@ import jsonwebtoken  from 'jsonwebtoken';
 import path from 'path';
 import { writeFile, readFile } from 'fs/promises'
 import { fileURLToPath, pathToFileURL } from 'url';
-import * as mongo from 'mongodb';
+import { default as mongodb } from 'mongodb';
+
+
+
 /*
     PathToFileURL Will use this to store in the database and it will read from the server
 */
@@ -15,12 +18,10 @@ const DIR = fileURLToPath(import.meta.url).split('/').slice(0, -1).join('/')
 console.log(DIR)
 // const API_DIRECTORY = 
 const PORT = process.env.PORT || 8080;
-const mongoUri = "mongodb+srv://zohar:andRes1993@localhost:27017/drawings";
-const mongoClient = mongo.MongoClient(mongoUri);
-const mongoDb = await mongoClient.connect()
 
 
 const app = express()
+let DB;
 
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: true}));
@@ -49,8 +50,8 @@ app.get('/api/user-drawings', authenticateToken, async(req, res) =>{
 })
 app.post('/api/save-drawing', async(req, res) => {
     const { isPrivate, imageName, image } = req.body;
-
-
+    const DB = await startDB();
+    
     try {
         return await saveDrawing()
     } catch (error) {
@@ -105,3 +106,16 @@ async function generateAccessToken() {
  * 
  mongo --port 27017  --authenticationDatabase "admin" -u "myUserAdmin" -p "andRes1993"
  */
+
+ async function startDB(){
+    try {
+        const uri = "mongodb://localhost:27017/drawings";
+        const MongoClient = new mongodb.MongoClient(uri)
+        const client = await MongoClient.connect()
+        DB = client
+    return client
+    }catch(e) {
+        console.error(e.message)
+        return e.message
+    }
+ }
