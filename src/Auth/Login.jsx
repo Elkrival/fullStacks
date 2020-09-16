@@ -21,13 +21,14 @@ export default function Login(){
             }
         }
         return fetch('login', options).then(res => res.json()).then(data => {
-            localStorage.setItem('token', data.token);
-            return data
+            if(data.user) {
+                localStorage.setItem('token', data.token);
+                return history.push('/main-page')
+            }
         })
     }
     const routeToRegister = (e) =>{
         e.preventDefault()
-    
         return history.push('/register-user')
     }
     return(

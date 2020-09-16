@@ -34,7 +34,6 @@ app.get(`/api`, async(req,res) =>{
 
 app.post(`/api/login`, async(req,res) =>{
     const { email, password } = req.body
-
     try {
         return await login()
     } catch (error) {
@@ -47,6 +46,7 @@ app.post(`/api/login`, async(req,res) =>{
         const collection = db.collection('users')
         const user = await collection.findOne({ "email": email })
         const doPasswordsMatch = await bcrypt.compare(password, user.password)
+        DB_CLIENT.close()
         if(doPasswordsMatch) {
             const token = await generateAccessToken();
             return res.status(200).json({ token, user })
