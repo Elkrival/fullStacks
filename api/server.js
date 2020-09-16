@@ -4,7 +4,7 @@ import cors from "cors";
 import jsonwebtoken  from 'jsonwebtoken';
 import path from 'path';
 import bcrypt from 'bcrypt';
-import { writeFile } from 'fs/promises'
+import { writeFile, unlink, stat } from 'fs/promises'
 import { fileURLToPath, pathToFileURL } from 'url';
 import { default as mongodb } from 'mongodb';
 const saltRounds = 10;
@@ -105,10 +105,13 @@ app.delete('/api/delete-drawing/:_id', authenticateToken, async(req,res) =>{
         const DB_CLIENT = await startDB();
         const db = await DB_CLIENT.db('drawings')
         const drawings = db.collection('drawings')
+        let drawing = await drawings.findOne({ _id: ObjectId(_id) });
+        let fileToDelete = path.join(DIR, "public", drawing.src)
+        await unlink(fileToDelete)
+        if(stat(fileToDelete).size > 0) return res.status(500).json({ deleted: false})
         let isDeleted = await drawings.deleteOne({ _id: ObjectId(_id)})
-        let a = await drawings.findOne({ _id: ObjectId(_id) });
 
-        if(isDeleted.result.ok === 1) {
+        if(isDeleted.result.ok === 1 && isDeleted.deletedCount === 1) {
             return res.status(200).json({ deleted: true })
         }
         return res.status(403).json({ deleted: false })
