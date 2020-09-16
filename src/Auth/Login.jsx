@@ -1,7 +1,35 @@
-import React, { useEffect, useState } from 'react'
-import { NavLink }   from "react-router-dom";
+import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom';
 
 export default function Login(){
+    const history = useHistory()
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const handleEmail = (e) =>{
+        setEmail(e.target.value)
+    }
+    const handlePassword = (e) =>{
+        setPassword(e.target.value)
+    }
+    const handleLogin = (e) => {
+        e.preventDefault();
+        const options = {
+            method: "POST",
+            body: JSON.stringify({ email, password }),
+            headers: {
+                'Content-Type': "Application/json"
+            }
+        }
+        return fetch('login', options).then(res => res.json()).then(data => {
+            localStorage.setItem('token', data.token);
+            return data
+        })
+    }
+    const routeToRegister = (e) =>{
+        e.preventDefault()
+    
+        return history.push('/register-user')
+    }
     return(
         <div className="container">
   <div className="row">
@@ -14,30 +42,26 @@ export default function Login(){
     <div className="col">
     </div>
     <div className="col">
-    <form>
+        <form>
             <div className="form-group">
-                <label for="emailInput">Email address</label>
-                <input type="email" className="form-control" id="emailInput" aria-describedby="emailHelp" placeholder="Enter email" />
+                <label htmlFor="emailInput">Email address</label>
+                <input onChange={(e) => handleEmail(e)} type="email" className="form-control" id="emailInput" aria-describedby="emailHelp" placeholder="Enter email" />
                 <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
             </div>
             <div className="form-group row">
-                <label for="password">Password</label>
-                <input type="password" className="form-control" id="password" placeholder="Password"/>
+                <label htmlFor="password">Password</label>
+                <input onChange={(e) => handlePassword(e)} type="password" className="form-control" id="password" placeholder="Password"/>
             </div>
             <div className="form-check row">
                 <input type="checkbox" className="form-check-input" id="rememberCheck" />
-                <label className="form-check-label" for="rememberMe">Remember Me</label>
+                <label className="form-check-label" htmlFor="rememberMe">Remember Me</label>
             </div>
-            <div className="form-group row">
+            <div className="row">
                 <div className="col">
-                    <NavLink to="/main-page" activeClassName="selected">
-                        <button type="submit" className="btn btn-primary">Submit</button>          
-                    </NavLink>
+                        <button  className="btn btn-primary" onClick={(e) => routeToRegister(e)} >Register</button>          
                 </div>
                 <div className="col">
-                    <NavLink to="/register" activeClassName="selected">
-                        <button type="submit" className="btn btn-primary">Register</button>          
-                    </NavLink>
+                        <button className="btn btn-primary" onClick={(e) => handleLogin(e)}>Submit</button>       
                 </div>
             </div>
         </form>

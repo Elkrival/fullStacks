@@ -1,11 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import * as dateFns from 'date-fns'
 
 export default React.forwardRef(function SubmitDrawing(props, ref) {
     const [imageData, setImageData] = useState();
     const [isPrivate, setPrivate] = useState(false);
     const [imageName, setImageName] = useState('');
-    const handleSubmit = (e) => {
+    const handleSubmit = () => {
         const { creationDate } = props;
         setImageData(props.canvas().toDataURL())
         const elapsedTime = dateFns.differenceInSeconds( dateFns.parseISO(dateFns.formatISO(new Date())) , dateFns.parseISO(creationDate))
@@ -16,7 +16,8 @@ export default React.forwardRef(function SubmitDrawing(props, ref) {
                 'Content-Type': 'application/json'
             }
         }
-        return fetch('save-drawing', options).then(res => res.json()).then(data => console.log(data))
+        let a = fetch('http://localhost:8080/api/save-drawing', options).then(res => res.json()).then(data => data)
+        return a
     }
     const preparePrivate = () =>{
         setPrivate(true)
@@ -53,7 +54,7 @@ export default React.forwardRef(function SubmitDrawing(props, ref) {
                     </div>
                     <div class="row">
                         <div class="col py-2">
-                            <button className="btn btn-primary" onClick={(e) => handleSubmit(e)}>Post Your Drawing 👍🏽</button>
+                            <button className="btn btn-primary" onClick={handleSubmit}>Post Your Drawing <span role="img" aria-label="thumbs-up">≈👍🏽</span></button>
                         </div>
                     </div>
                 </div>

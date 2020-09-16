@@ -3,7 +3,7 @@ import { ColorContext } from "./DrawingPad";
 import Eraser from './Eraser';
 
 export default function Options(props) {
-    const {state, dispatch} = useContext(ColorContext);
+    const { dispatch } = useContext(ColorContext);
     const changeColorValue = (color) => {
         dispatch({ type: 'UPDATE_COLOR', data: color,});
     };

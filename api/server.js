@@ -3,10 +3,11 @@ import express from "express";
 import cors from "cors";
 import jsonwebtoken  from 'jsonwebtoken';
 import path from 'path';
-import { writeFile, readFile } from 'fs/promises'
+import bcrypt from 'bcrypt';
+import { writeFile } from 'fs/promises'
 import { fileURLToPath, pathToFileURL } from 'url';
 import { default as mongodb } from 'mongodb';
-
+const saltRounds = 10;
 /*
     PathToFileURL Will use this to store in the database and it will read from the server
 */
@@ -31,33 +32,48 @@ app.get(`/api`, async(req,res) =>{
     }
 })
 
-app.get(`/api/login`, async(req,res) =>{
-    // const { username, password } = req.body
+app.post(`/api/login`, async(req,res) =>{
+    const { email, password } = req.body
 
     try {
-        const token = await generateAccessToken();
-        return res.json(token);
+        return await login()
     } catch (error) {
         console.error(error.stack)
         return res.json({ message: e.message })
     }
+    async function login() {
+        const DB_CLIENT = await startDB();
+        const db = await DB_CLIENT.db('drawings')
+        const collection = db.collection('users')
+        const user = await collection.findOne({ "email": email })
+        const doPasswordsMatch = await bcrypt.compare(password, user.password)
+        if(doPasswordsMatch) {
+            const token = await generateAccessToken();
+            return res.status(200).json({ token, user })
+        } else {
+            return res.status(401).json({ message: "Passwords do not match."})
+        }
+    }
 })
 app.post(`/api/register`, async(req,res) =>{
-
+    const { email, password } = req.body
     try {
-        return await insertUser()
+        const result = await insertUser()
+        return result
     } catch (error) {
         console.error(error.stack)
         return res.json({ message: e.message })
     }
     async function insertUser() {
-        console.log("ASDFASDFASDFASDF")
-        const { email, password } = req.body
-        const DB = await startDB();
-        const collection = DB.collection('users')
-        const user = await collection.insert({ email, password })
+
+        const DB_CLIENT = await startDB();
+        const db = await DB_CLIENT.db('drawings')
+        const collection = db.collection('users')
+        let hash = await bcrypt.hash(password, saltRounds)
+        const user = await collection.insertOne({ email, password: hash })
         const token = await generateAccessToken();
-        return res.json({token, user: user.ops[0]})
+        DB_CLIENT.close()
+        return res.status(200).json({token, user: user.ops[0]})
     }
 })
 app.get('/api/user-drawings', authenticateToken, async(req, res) =>{
@@ -129,9 +145,7 @@ async function generateAccessToken(user) {
         const uri = "mongodb://localhost:27017/drawings";
         const MongoClient = new mongodb.MongoClient(uri)
         const client = await MongoClient.connect()
-        const db = await client.db('drawings')
-
-        return db
+        return client
     }catch(e) {
         console.error(e.message)
         return e.message

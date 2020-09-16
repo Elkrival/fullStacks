@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { ColorContext } from "./DrawingPad";
 
 export default function Eraser() {
-    const {state, dispatch} = useContext(ColorContext);
+    const { dispatch} = useContext(ColorContext);
     const eraserSetting = (eraser) =>{
         dispatch({ type: 'UPDATE_COLOR', data: eraser })
     }
