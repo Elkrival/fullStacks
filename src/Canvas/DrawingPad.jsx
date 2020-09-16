@@ -29,7 +29,7 @@ const initialState = {
     rgba: [0, 0, 0, 1],
     lineWidth: 5
 }
-export default function DrawingPad(){
+export default function DrawingPad(props){
     const canvasRef = useRef(null)
     //This gives us access to the canvas dom element
     const contextRef = useRef(null);
@@ -44,13 +44,13 @@ export default function DrawingPad(){
             </div>
             <div className="row">
                 <div className="col">
-                    <WhiteBoard ref={{ canvasRef, contextRef }} brush={ state.color } lineWidth={ state.lineWidth }/>
+                    <WhiteBoard ref={{ canvasRef, contextRef }} brush={ state.color } lineWidth={ state.lineWidth } setCreationDate={ props.setCreationDate }/>
                 </div>
             </div>
             <div className="row">
                 <ColorContext.Provider value={{ state, dispatch }}>
                     <Options colors={ colors } lineWidths={ lineWidths }/>
-                    <SubmitDrawing ref={{ canvasRef, contextRef }} canvas={getCanvas}/>
+                    <SubmitDrawing ref={{ canvasRef, contextRef }} canvas={getCanvas} creationDate={ props.creationDate }/>
                 </ColorContext.Provider>
             </div>
         </div>

@@ -4,10 +4,11 @@ import DrawingPad from '../Canvas/DrawingPad';
 
 export const DrawingListContext = React.createContext();
 const initialState = {
-    drawings: [{ src: 'image goes here' }]
+    drawings: [{ src: 'image goes here' }],
 }
 function Main() {
     const [state, dispatch] = useReducer(reducer, initialState)
+    const [creationDate, setCreationDate ] = useState('')
     const [showPad, setShowPad] = useState(false);
     const showGallery = () => {
         return setShowPad(false)
@@ -17,7 +18,7 @@ function Main() {
     }
     const renderComponent = () =>{
         if (showPad) {
-            return <DrawingPad />;
+            return <DrawingPad setCreationDate={setCreationDate} creationDate={creationDate}/>;
           }
           return <DrawingList drawings={state.drawings} />;
     }
@@ -44,7 +45,6 @@ function Main() {
   );
 }
 function reducer(state, action) {
-    console.log(action)
     switch (action.type) {
         case 'UPDATE_DRAWING_LIST': 
             return {

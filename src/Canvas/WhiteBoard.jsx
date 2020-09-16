@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { formatISO } from 'date-fns';
 
 export default React.forwardRef(function WhiteBoard(props, ref){
     const { canvasRef, contextRef } = ref; 
@@ -37,6 +38,8 @@ export default React.forwardRef(function WhiteBoard(props, ref){
         contextRef.current.moveTo(offsetX, offsetY)
         contextRef.current.lineTo(offsetX, offsetY)
         setIsDrawing(true)
+        const startTime = formatISO(new Date())
+        props.setCreationDate(startTime)
     }
     const finishDrawing = () =>{
         contextRef.current.closePath()

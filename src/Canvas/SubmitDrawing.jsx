@@ -1,16 +1,17 @@
 import React, { useState, useContext } from 'react';
-
+import * as dateFns from 'date-fns'
 
 export default React.forwardRef(function SubmitDrawing(props, ref) {
     const [imageData, setImageData] = useState();
     const [isPrivate, setPrivate] = useState(false);
     const [imageName, setImageName] = useState('');
     const handleSubmit = (e) => {
+        const { creationDate } = props;
         setImageData(props.canvas().toDataURL())
-        console.log(imageData)
+        const elapsedTime = dateFns.differenceInSeconds( dateFns.parseISO(dateFns.formatISO(new Date())) , dateFns.parseISO(creationDate))
         const options = {
             method: 'POST',
-            body: JSON.stringify({ isPrivate, image: imageData, imageName }),
+            body: JSON.stringify({ isPrivate, image: imageData, imageName, creationDate: creationDate, elapsedTime }),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -19,15 +20,6 @@ export default React.forwardRef(function SubmitDrawing(props, ref) {
     }
     const preparePrivate = () =>{
         setPrivate(true)
-        // const reader = new FileReader();
-        // reader.onload = function(event){
-        //     console.log(event.target.result)
-        //     setImageData(event.target.result)
-        // }
-        
-        // props.canvas().toBlob(function(blob) {
-        //     reader.readAsDataURL(blob);
-        // })
     }
     const preparePublic = () =>{
         setPrivate(false)

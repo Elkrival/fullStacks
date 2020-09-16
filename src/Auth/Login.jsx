@@ -20,17 +20,26 @@ export default function Login(){
                 <input type="email" className="form-control" id="emailInput" aria-describedby="emailHelp" placeholder="Enter email" />
                 <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
             </div>
-            <div className="form-group">
+            <div className="form-group row">
                 <label for="password">Password</label>
                 <input type="password" className="form-control" id="password" placeholder="Password"/>
             </div>
-            <div className="form-check">
+            <div className="form-check row">
                 <input type="checkbox" className="form-check-input" id="rememberCheck" />
                 <label className="form-check-label" for="rememberMe">Remember Me</label>
             </div>
-            <NavLink to="/main-page" activeClassName="selected">
-            <button type="submit" className="btn btn-primary">Submit</button>
-</NavLink>
+            <div className="form-group row">
+                <div className="col">
+                    <NavLink to="/main-page" activeClassName="selected">
+                        <button type="submit" className="btn btn-primary">Submit</button>          
+                    </NavLink>
+                </div>
+                <div className="col">
+                    <NavLink to="/register" activeClassName="selected">
+                        <button type="submit" className="btn btn-primary">Register</button>          
+                    </NavLink>
+                </div>
+            </div>
         </form>
     </div>
     <div className="col">
