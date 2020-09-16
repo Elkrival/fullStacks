@@ -1,10 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import DrawingsTable from './DrawingsTable';
 
-function DrawingList(props) {
+function DrawingList() {
+  const [drawingsList, setDrawings] = useState([])
+  const token = localStorage.getItem('token')
+  useEffect(() =>{
+    getPrivateDrawings()
+}, [])
+  const getPrivateDrawings = () =>{
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    }
+    fetch('user-drawings', options).then(res => res.json()).then(data => { 
+        setDrawings(data.drawings)
+      })
+  }
   return (
-    <div>
-        <h1>Hi</h1>
-        {props.drawings.map(drawing => (<div>{drawing.src}</div>))}
+    <div className="container">
+
+      <div className="row">
+        <DrawingsTable drawings={drawingsList} />
+      </div>
+       
     </div>
   );
 }

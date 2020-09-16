@@ -8,12 +8,9 @@ import { writeFile } from 'fs/promises'
 import { fileURLToPath, pathToFileURL } from 'url';
 import { default as mongodb } from 'mongodb';
 const saltRounds = 10;
-/*
-    PathToFileURL Will use this to store in the database and it will read from the server
-*/
 
 dotenv.config()
-const DIR = fileURLToPath(import.meta.url).split('/').slice(0, -1).join('/')
+const DIR = fileURLToPath(import.meta.url).split('/').slice(0, -2).join('/')
 // const API_DIRECTORY = 
 const PORT = process.env.PORT || 8080;
 
@@ -76,32 +73,56 @@ app.post(`/api/register`, async(req,res) =>{
     }
 })
 app.get('/api/user-drawings', authenticateToken, async(req, res) =>{
-
+    try {
+        const result = await getUserDrawings()
+        return result
+    } catch (error) {
+        console.error(error.stack)
+        return res.status(401).json({ message: error.message })
+    }
+    async function getUserDrawings(){
+        const DB_CLIENT = await startDB();
+        const db = await DB_CLIENT.db('drawings')
+        const drawings = db.collection('drawings')
+        const users = db.collection('users');
+        const user = await users.findOne({ email: req.user.email })
+        const usersDrawings = await drawings.find({ user: user._id })
+        const result = await usersDrawings.toArray()
+        return res.status(200).json({drawings: result})
+    }
 })
 app.post('/api/save-drawing',authenticateToken, async(req, res) => {
-    const { isPrivate, imageName, image } = req.body;
+    const { isPrivate, imageName, image, creationDate, elapsedTime } = req.body;
+    
     const DB_CLIENT = await startDB();
     const db = await DB_CLIENT.db('drawings')
-    const collection = db.collection('drawings')
-
+    const drawings = db.collection('drawings')
+    const users = db.collection('users')
     try {
         return await saveDrawing()
     } catch (error) {
-        console.error(error)
+        console.error(error.stack)
         return res.json({ error: error.message, status: 401 })
     }
     async function saveDrawing(){
         try {
-            const base64Data = image.replace(/^data:image\/png;base64,/, "")
-            const filePath = path.join(DIR, 'image_files', imageName + '.jpeg')
-            const base64ToBuffer = new Buffer.from(base64Data, 'base64')
-            await writeFile(filePath, base64ToBuffer)
-            const fileUrl = pathToFileURL(filePath).pathname
-            const user = await collection.updateOne({ email: req.user.email }, { $set: { "src": fileUrl }})
-            if (user.result.ok === 1) {
-                return res.status(200).json({ message: "HIt the route." })
-            }
+            if(image) {
+                const base64Data = image.replace(/^data:image\/png;base64,/, "")
+                const filePath = path.join('images', imageName + '.jpeg')
+                const pathToWrite = path.join(DIR, 'public', 'images', imageName + '.jpeg')
+                const base64ToBuffer = new Buffer.from(base64Data, 'base64')
+                await writeFile(pathToWrite, base64ToBuffer)
+                const getUser = await users.findOne({ email: req.user.email });
             
+                const drawing = await drawings.insertOne({ "src": filePath, "isPrivate": isPrivate, "user": getUser._id, "creationDate": creationDate, "elapsedTime": elapsedTime })
+
+                if (drawing.result.ok === 1) {
+                    return res.status(200).json({ message: "HIt the route." })
+                }
+                return res.status(400).json({ message: "There is a problem."})
+            } else {
+                return res.status(400).json({ message: "Image not in the right format"})
+            }
         } catch(e) {
             console.error(e.stack)
             return res.json({ message: e.message })
@@ -123,7 +144,6 @@ function authenticateToken(req, res, next) {
    if (token === null)  return res.sendStatus(401)
 
     jsonwebtoken.verify(token, process.env.ACCESS_TOKEN, (err, user) =>{
-       const decode = jsonwebtoken.decode(token, process.env.ACCESS_TOKEN)
        if (err) return res.sendStatus(403)
         req.user = user
         next()
@@ -140,11 +160,6 @@ async function generateAccessToken(user) {
     // expires after half and hour (1800 seconds = 30 minutes)
     return jsonwebtoken.sign({ email: user.email }, process.env.ACCESS_TOKEN, { expiresIn: '24h' });
 }
-/**
- * 
- * 
- mongo --port 27017  --authenticationDatabase "admin" -u "myUserAdmin" -p "andRes1993"
- */
 
  async function startDB(){
     try {
