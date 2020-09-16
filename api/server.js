@@ -48,7 +48,7 @@ app.post(`/api/login`, async(req,res) =>{
         const doPasswordsMatch = await bcrypt.compare(password, user.password)
         DB_CLIENT.close()
         if(doPasswordsMatch) {
-            const token = await generateAccessToken();
+            const token = await generateAccessToken(user);
             return res.status(200).json({ token, user })
         } else {
             return res.status(401).json({ message: "Passwords do not match."})
@@ -71,18 +71,18 @@ app.post(`/api/register`, async(req,res) =>{
         const collection = db.collection('users')
         let hash = await bcrypt.hash(password, saltRounds)
         const user = await collection.insertOne({ email, password: hash })
-        const token = await generateAccessToken();
-        DB_CLIENT.close()
-        return res.status(200).json({token, user: user.ops[0]})
+        const token = await generateAccessToken(user.ops[0]);
+        return res.status(200).json({token, email: user.ops[0].email})
     }
 })
 app.get('/api/user-drawings', authenticateToken, async(req, res) =>{
 
 })
-app.post('/api/save-drawing', async(req, res) => {
+app.post('/api/save-drawing',authenticateToken, async(req, res) => {
     const { isPrivate, imageName, image } = req.body;
-    const DB = await startDB();
-    const collection = DB.collection('drawings')
+    const DB_CLIENT = await startDB();
+    const db = await DB_CLIENT.db('drawings')
+    const collection = db.collection('drawings')
 
     try {
         return await saveDrawing()
@@ -94,11 +94,14 @@ app.post('/api/save-drawing', async(req, res) => {
         try {
             const base64Data = image.replace(/^data:image\/png;base64,/, "")
             const filePath = path.join(DIR, 'image_files', imageName + '.jpeg')
-            const base64ToBuffer = new Buffer.from(base64Data, 'base64');
+            const base64ToBuffer = new Buffer.from(base64Data, 'base64')
             await writeFile(filePath, base64ToBuffer)
             const fileUrl = pathToFileURL(filePath).pathname
-
-            return res.status(200).json({ message: "HIt the route."})
+            const user = await collection.updateOne({ email: req.user.email }, { $set: { "src": fileUrl }})
+            if (user.result.ok === 1) {
+                return res.status(200).json({ message: "HIt the route." })
+            }
+            
         } catch(e) {
             console.error(e.stack)
             return res.json({ message: e.message })
@@ -118,11 +121,13 @@ function authenticateToken(req, res, next) {
    const authHeader = req.headers[`authorization`]
    const token = authHeader && authHeader.split(' ')[1];
    if (token === null)  return res.sendStatus(401)
-   jwt.verify(token, process.env.ACCESS_TOKEN, (err, user) =>{
+
+    jsonwebtoken.verify(token, process.env.ACCESS_TOKEN, (err, user) =>{
+       const decode = jsonwebtoken.decode(token, process.env.ACCESS_TOKEN)
        if (err) return res.sendStatus(403)
         req.user = user
         next()
-   })
+    })
 
 }
 
@@ -131,8 +136,9 @@ app.listen(PORT, function () {
 });
 
 async function generateAccessToken(user) {
+    
     // expires after half and hour (1800 seconds = 30 minutes)
-    return jsonwebtoken.sign({ user }, process.env.ACCESS_TOKEN, { expiresIn: '1800s' });
+    return jsonwebtoken.sign({ email: user.email }, process.env.ACCESS_TOKEN, { expiresIn: '24h' });
 }
 /**
  * 

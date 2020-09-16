@@ -5,7 +5,10 @@ export default React.forwardRef(function SubmitDrawing(props, ref) {
     const [imageData, setImageData] = useState();
     const [isPrivate, setPrivate] = useState(false);
     const [imageName, setImageName] = useState('');
+    const [jwt, setJWT] = useState('')
     const handleSubmit = () => {
+        const token = localStorage.getItem('token');
+        setJWT(token)
         const { creationDate } = props;
         setImageData(props.canvas().toDataURL())
         const elapsedTime = dateFns.differenceInSeconds( dateFns.parseISO(dateFns.formatISO(new Date())) , dateFns.parseISO(creationDate))
@@ -13,11 +16,15 @@ export default React.forwardRef(function SubmitDrawing(props, ref) {
             method: 'POST',
             body: JSON.stringify({ isPrivate, image: imageData, imageName, creationDate: creationDate, elapsedTime }),
             headers: {
+                'Authorization': `Bearer ${jwt}`,
                 'Content-Type': 'application/json'
             }
         }
-        let a = fetch('http://localhost:8080/api/save-drawing', options).then(res => res.json()).then(data => data)
-        return a
+        fetch('http://localhost:8080/api/save-drawing', options).then(res => res.json()).then(data => {
+            console.log(data)
+            debugger;
+            return data
+        })
     }
     const preparePrivate = () =>{
         setPrivate(true)

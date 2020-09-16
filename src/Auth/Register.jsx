@@ -21,8 +21,11 @@ export default function Register(){
             }
         }
         return fetch("register", options).then(res => res.json()).then(data => {
-            localStorage.setItem('token', data.token);
-            return data;
+            if(data.token) {
+                localStorage.setItem('token', data.token);
+                return history.push('/main-page')
+            }
+         
         })
     }
     const returnToLogin = () =>{
