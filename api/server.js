@@ -114,7 +114,7 @@ app.post('/api/save-drawing',authenticateToken, async(req, res) => {
                 await writeFile(pathToWrite, base64ToBuffer)
                 const getUser = await users.findOne({ email: req.user.email });
             
-                const drawing = await drawings.insertOne({ "src": filePath, "isPrivate": isPrivate, "user": getUser._id, "creationDate": creationDate, "elapsedTime": elapsedTime })
+                const drawing = await drawings.insertOne({ "email": getUser.email ,"src": filePath, "isPrivate": isPrivate, "user": getUser._id, "creationDate": creationDate, "elapsedTime": elapsedTime })
 
                 if (drawing.result.ok === 1) {
                     return res.status(200).json({ message: "HIt the route." })
