@@ -57,7 +57,6 @@ export default function DrawingPad(props){
     )
 }
 function reducer(state, action) {
-    console.log(action)
     switch (action.type) {
         case 'UPDATE_COLOR':
             return {
@@ -67,10 +66,6 @@ function reducer(state, action) {
         case 'UPDATE_LINE_WIDTH':
             return {
                 lineWidth: action.data.lineWidth
-            }
-        case 'ADD_TO_LIST': 
-            return {
-                drawings: [...state, action.data]
             }
         default:
             return initialState;

@@ -5,7 +5,8 @@ export default React.forwardRef(function SubmitDrawing(props, ref) {
     const [imageData, setImageData] = useState();
     const [isPrivate, setPrivate] = useState(false);
     const [imageName, setImageName] = useState('');
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
         const token = localStorage.getItem('token');
         const { creationDate } = props;
         const elapsedTime = dateFns.differenceInSeconds( dateFns.parseISO(dateFns.formatISO(new Date())) , dateFns.parseISO(creationDate))
@@ -58,7 +59,7 @@ export default React.forwardRef(function SubmitDrawing(props, ref) {
                     </div>
                     <div class="row">
                         <div class="col py-2">
-                            <button className="btn btn-primary" onClick={handleSubmit}>Post Your Drawing <span role="img" aria-label="thumbs-up">≈👍🏽</span></button>
+                            <button className="btn btn-primary" onClick={(e) => handleSubmit(e)}>Post Your Drawing <span role="img" aria-label="thumbs-up">≈👍🏽</span></button>
                         </div>
                     </div>
                 </div>

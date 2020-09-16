@@ -46,10 +46,6 @@ function Main() {
 }
 function reducer(state, action) {
     switch (action.type) {
-        case 'UPDATE_DRAWING_LIST': 
-            return {
-                drawings: [...state, action.data.newDrawing]
-            }
         default:
             return initialState;
     }

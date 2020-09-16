@@ -13,7 +13,7 @@ dotenv.config()
 const DIR = fileURLToPath(import.meta.url).split('/').slice(0, -2).join('/')
 // const API_DIRECTORY = 
 const PORT = process.env.PORT || 8080;
-
+const ObjectId = mongodb.ObjectId
 
 const app = express()
 
@@ -72,23 +72,46 @@ app.post(`/api/register`, async(req,res) =>{
         return res.status(200).json({token, email: user.ops[0].email})
     }
 })
-app.get('/api/user-drawings', authenticateToken, async(req, res) =>{
+app.get('/api/user-public-drawings', authenticateToken, async(req, res) =>{
     try {
-        const result = await getUserDrawings()
-        return result
+        const { email } = req.user
+        const drawings = await getUserDrawings(email, false)
+        return res.status(200).json({drawings })
     } catch (error) {
         console.error(error.stack)
         return res.status(401).json({ message: error.message })
     }
-    async function getUserDrawings(){
+})
+app.get('/api/user-private-drawings', authenticateToken, async(req, res) =>{
+    try {
+        const { email } = req.user
+        const drawings = await getUserDrawings(email, true)
+        return res.status(200).json({drawings })
+    } catch (error) {
+        console.error(error.stack)
+        return res.status(401).json({ message: error.message })
+    }
+})
+app.delete('/api/delete-drawing/:_id', authenticateToken, async(req,res) =>{
+    try {
+        const result = await deleteUserDrawing();
+        return result
+    } catch (error) {
+        console.error(error.stack)
+        return res.status(400).json({ message: "There was an internal problem."})
+    }
+    async function deleteUserDrawing(){
+        const { _id } = req.params;
         const DB_CLIENT = await startDB();
         const db = await DB_CLIENT.db('drawings')
         const drawings = db.collection('drawings')
-        const users = db.collection('users');
-        const user = await users.findOne({ email: req.user.email })
-        const usersDrawings = await drawings.find({ user: user._id })
-        const result = await usersDrawings.toArray()
-        return res.status(200).json({drawings: result})
+        let isDeleted = await drawings.deleteOne({ _id: ObjectId(_id)})
+        let a = await drawings.findOne({ _id: ObjectId(_id) });
+
+        if(isDeleted.result.ok === 1) {
+            return res.status(200).json({ deleted: true })
+        }
+        return res.status(403).json({ deleted: false })
     }
 })
 app.post('/api/save-drawing',authenticateToken, async(req, res) => {
@@ -113,11 +136,9 @@ app.post('/api/save-drawing',authenticateToken, async(req, res) => {
                 const base64ToBuffer = new Buffer.from(base64Data, 'base64')
                 await writeFile(pathToWrite, base64ToBuffer)
                 const getUser = await users.findOne({ email: req.user.email });
-            
                 const drawing = await drawings.insertOne({ "email": getUser.email ,"src": filePath, "isPrivate": isPrivate, "user": getUser._id, "creationDate": creationDate, "elapsedTime": elapsedTime })
-
                 if (drawing.result.ok === 1) {
-                    return res.status(200).json({ message: "HIt the route." })
+                    return res.status(200).json({ message: "Drawing added." })
                 }
                 return res.status(400).json({ message: "There is a problem."})
             } else {
@@ -156,9 +177,7 @@ app.listen(PORT, function () {
 });
 
 async function generateAccessToken(user) {
-    
-    // expires after half and hour (1800 seconds = 30 minutes)
-    return jsonwebtoken.sign({ email: user.email }, process.env.ACCESS_TOKEN, { expiresIn: '24h' });
+        return jsonwebtoken.sign({ email: user.email }, process.env.ACCESS_TOKEN, { expiresIn: '24h' });
 }
 
  async function startDB(){
@@ -172,3 +191,12 @@ async function generateAccessToken(user) {
         return e.message
     }
  }
+ async function getUserDrawings(email, isPrivate){
+    const DB_CLIENT = await startDB();
+    const db = await DB_CLIENT.db('drawings')
+    const drawings = db.collection('drawings')
+    const users = db.collection('users');
+    const user = await users.findOne({ email })
+    const usersDrawings = await drawings.find({ user: user._id, isPrivate })
+    return await usersDrawings.toArray()
+}
