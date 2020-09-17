@@ -1,8 +1,11 @@
 # Welcome to the Drawing Pad
 
 **Frontend=** React, react-router, bootstrap
+
 **Backend =** node, expressj, jsonwebtokens, bcrypt
-**Database=** mongodb .
+
+**Database=** mongodb
+
 
 
 # Frontend
@@ -54,20 +57,34 @@ Uses express server that initializes a mongodb database it uses bcrypt to has pa
 ## Next Implementation trade-offs
 
 **type checking on frontend, mongodriver,**
+
 **Filestack bucket**
+
 **Linter**
+
 **Input Sanitation**
+
 **No custom css**
+
 **cypress**
+
 **tests**
+
 **range of time queries**
+
 **members area**
+
 **videos**
 
 ## Gained
 **Mobile responsive design**
+
 **Lightweight**
+
 **Easy to expand upon**
+
 **Stylish**
+
 **Universal**
+
 **Easy to Use**
