@@ -1,5 +1,4 @@
 import React, { useState, useReducer } from 'react';
-import { toast } from 'react-toastify';
 import DrawingList from '../Drawings/DrawingList';
 import DrawingPad from '../Canvas/DrawingPad';
 
