@@ -7,7 +7,6 @@ import bcrypt from 'bcrypt';
 import { writeFile, unlink, stat } from 'fs/promises'
 import { fileURLToPath, pathToFileURL } from 'url';
 import { default as mongodb } from 'mongodb';
-import { resolveSoa } from 'dns';
 const saltRounds = 10;
 
 dotenv.config()

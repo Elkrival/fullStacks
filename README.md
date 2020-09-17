@@ -1,68 +1,42 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+● General architecture of the application. 
+● Reasoning behind main technical choices. 
+● Things you didn't implement or trade-offs you made. This can also include details about how you would implement things differently if you were to spend more time on the assignment or if it was for production use.
 
-## Available Scripts
+Architecture
+Frontend is written in react using a Flux Architecture for Components and react router to handle routing from different Parent Components.
 
-In the project directory, you can run:
+Browser View is App.JS and it implements router and it routes to three components
+Login: Parent Component alone component handles login
+Register: Parent Component alone compnoent handles register
+Main: Parent Component that displays users Drawings or it displays the Drawing Pad.
+DrawingsList: Displays two tables that list users Private or Public drawings. The Private drawings have a button to share the url or to the delete the drawing, the public drawings do not have the share url option just delete.
+It also displays user information and buttons that route either to the gallery or the drawing pad.
+DrawingPad: has a drawing pad, it keeps track of time, has different options for color, line width, eraser and it has the option to set a drawing to private a public and submit it to the server.
+ToastComponent: Displays success or error messages from api calls.
+DateFNS: used to parse, convert and get time difference.
 
-### `npm start`
+Server: 
+Uses express server that initializes a mongodb database it uses bcrypt to has passwords, jsonwebtokens for authentication, it writes, deletes and verifies files. 
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+login: Takes emial and password it verifies that passwords match otherwise it returns an error. Route is not token authenticated.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+register: Creates new user in mongodb database and it returns a token: Route is not token authenticated
 
-### `npm test`
+user-public-drawings: get's users public drawings from database and it has src to directory of drawings. Route is token authenticated.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+user-private-drawings: gets users private drawings from database. Route is token authenticated.
 
-### `npm run build`
+delete-drawing/:_id: deletes drawing from database and removes file from images directory, also uses route params. Route is token authenticated.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+save-drawing: takes form input for image which includes name, elapsed time, time created, image url data. This route takes image data and writes a new file to image directory, it creates a mongodb document with image information. Route is token authenticated.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+share-url: prepares drawing url to be shared with others. Route is token authenticated.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+express middleware to handle errors on line 163
+Function to verify token on line 173
+Funciton to generate access token on line 190
+Function that starts mongodb instance on line 194
+Function to connect with drawings collection line 205
 
-### `npm run eject`
+DIR variable is to get path to directory for stored images
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify

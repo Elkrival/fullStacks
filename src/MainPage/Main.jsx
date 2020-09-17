@@ -25,7 +25,7 @@ function Main() {
         if (showPad) {
             return <DrawingPad setCreationDate={setCreationDate} creationDate={creationDate}/>;
           }
-          return <DrawingList drawings={state.drawings} />;
+          return <DrawingList />;
     }
   return (
     <div>
