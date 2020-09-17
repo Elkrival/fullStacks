@@ -12,6 +12,9 @@ export default function DrawingsTable(props){
                         <th scope="col">User</th>
                         <th scope="col">Thumbnail</th>
                         <th scope="col">Delete</th>
+                        {props.isPublic 
+                            ? null
+                            : <th scope="col">Share URL</th>}
                     </tr>
                 </thead>
                 <tbody>
@@ -25,6 +28,9 @@ export default function DrawingsTable(props){
                                 <td>{drawing.email}</td>
                                 <td style={{width: '25%', height: '25%'}}><img src={`${drawing.src}`} className="img-fluid" alt="super awesome drawing" /></td>
                                 <td><button type="button" class="btn btn-outline-danger" onClick={() => props.deleteDrawing({_id: drawing._id, isPrivate: drawing.isPrivate})}>Delete</button></td>
+                                { drawing.isPrivate 
+                                    ? <td><button type="button" class="btn btn-outline-warning" onClick={() => props.shareUrl({ _id: drawing._id })}>Share URL</button></td>
+                                    : null }
                             </tr>
                         )
                     })}

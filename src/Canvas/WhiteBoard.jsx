@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { formatISO } from 'date-fns';
+import {isMobile} from 'react-device-detect';
 
 export default React.forwardRef(function WhiteBoard(props, ref){
     const { canvasRef, contextRef } = ref; 
@@ -54,12 +55,20 @@ export default React.forwardRef(function WhiteBoard(props, ref){
     return(
         <div className="card">
             <div className="card-body">
-                <canvas
+                { isMobile 
+                    ? <canvas
+                    onTouchStart={startDrawing}
+                    onTouchEnd={finishDrawing}
+                    onTouchMove={draw}
+                    ref={canvasRef}
+                />
+                    : <canvas
                     onMouseDown={startDrawing}
                     onMouseUp={finishDrawing}
                     onMouseMove={draw}
                     ref={canvasRef}
                 />
+                }
             </div>
         </div>
     )

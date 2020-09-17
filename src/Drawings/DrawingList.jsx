@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import DrawingsTable from './DrawingsTable';
 import { toast } from 'react-toastify';
 
-function DrawingList() {
+export default function DrawingList() {
   const [publicDrawings, setPublicDrawings] = useState([])
   const [privateDrawings, setPrivateDrawings] = useState([])
   const token = localStorage.getItem('token')
   useEffect(() =>{
     getPublicDrawings()
     getPrivateDrawings()
-}, [])
+  }, [])  
   const getPublicDrawings = () =>{
     const options = {
       method: 'GET',
@@ -62,7 +62,39 @@ function DrawingList() {
             
         }
     })
-
+  }
+    const shareUrl = (_id) =>{
+      const options = {
+        method: "POST",
+        headers: {
+          'Content-Type': "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(_id)
+      }
+      fetch(`share-url`, options).then(res => res.json()).then(data => {
+        if(data.success) {
+          toast.info('URL has been shared. 🛫', {
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            }); 
+        } else {
+          toast('🦄 There was a problem deleting your drawing.', {
+            position: toast.POSITION.BOTTOM_CENTER,
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            }); 
+        }
+    })
   }
   return (
     <div className="container-fluid">
@@ -72,7 +104,7 @@ function DrawingList() {
         </div>
       </div>
       <div className="row">
-        <DrawingsTable drawings={privateDrawings} deleteDrawing={deleteDrawing} />
+        <DrawingsTable drawings={privateDrawings} deleteDrawing={deleteDrawing} shareUrl={shareUrl} isPublic={false}/>
       </div>
       <div class="row align-items-center">
         <div class="col">
@@ -80,11 +112,9 @@ function DrawingList() {
         </div>
       </div>
       <div className="row">
-        <DrawingsTable drawings={publicDrawings} deleteDrawing={deleteDrawing} />
+        <DrawingsTable drawings={publicDrawings} deleteDrawing={deleteDrawing} isPublic={true}/>
       </div>
        
     </div>
   );
 }
-
-export default DrawingList;

@@ -12,7 +12,6 @@ const saltRounds = 10;
 
 dotenv.config()
 const DIR = fileURLToPath(import.meta.url).split('/').slice(0, -2).join('/')
-// const API_DIRECTORY = 
 const PORT = process.env.PORT || 8080;
 const ObjectId = mongodb.ObjectId
 
@@ -145,6 +144,23 @@ app.post('/api/save-drawing',authenticateToken, async(req, res) => {
         }
     }
 })
+app.post('/api/share-url',authenticateToken, async(req, res) => {
+    try {
+        return await getShareUrl()
+    } catch (error) {
+        console.error(error.stack)
+        return res.json({ success: false })
+    }
+    async function getShareUrl(){
+        const { _id } = req.body
+        const DB_CLIENT = await startDB();
+        const db = await DB_CLIENT.db('drawings')
+        const drawings = db.collection('drawings')
+        let drawing = await drawings.findOne({ _id: ObjectId(_id) });
+        return res.status(200).json({ success: true, src: drawing.src })
+    }
+})
+
 app.use(async(err, req, res, next) => {
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error';

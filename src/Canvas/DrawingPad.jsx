@@ -31,7 +31,6 @@ const initialState = {
 }
 export default function DrawingPad(props){
     const canvasRef = useRef(null)
-    //This gives us access to the canvas dom element
     const contextRef = useRef(null);
     const [state, dispatch] = useReducer(reducer, initialState);
     const getCanvas = () => { return canvasRef.current }

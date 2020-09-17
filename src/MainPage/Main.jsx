@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 import DrawingList from '../Drawings/DrawingList';
 import DrawingPad from '../Canvas/DrawingPad';
 
@@ -10,6 +10,11 @@ function Main() {
     const [state, dispatch] = useReducer(reducer, initialState)
     const [creationDate, setCreationDate ] = useState('')
     const [showPad, setShowPad] = useState(false);
+    const [email, setEmail] = useState('');
+    useEffect(() => {
+        const getEmail = localStorage.getItem('email');
+        setEmail(getEmail)
+    }, [])
     const showGallery = () => {
         return setShowPad(false)
     }
@@ -28,10 +33,13 @@ function Main() {
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="col">
                 <div className="row">
-                    <div className="col">
+                    <div className="col col-md-3">
                         <button onClick={() => showGallery()} type="submit" className="btn btn-primary">Gallery</button>
                     </div>
-                    <div className="col">
+                    <div className="col col-md-3">
+                        <h2> Welcome {email}</h2>
+                    </div>
+                    <div className="col col-md-3">
                         <button onClick={() => createDrawing()} type="submit" className="btn btn-primary">Make More</button>
                     </div>
                 </div>
