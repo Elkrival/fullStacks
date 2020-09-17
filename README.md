@@ -5,6 +5,10 @@
 Architecture
 Frontend is written in react using a Flux Architecture for Components and react router to handle routing from different Parent Components.
 
+Backend is written in node with an express server
+
+Frontend and Backend are proxy to each other.
+
 Browser View is App.JS and it implements router and it routes to three components
 Login: Parent Component alone component handles login
 Register: Parent Component alone compnoent handles register
@@ -38,5 +42,34 @@ Funciton to generate access token on line 190
 Function that starts mongodb instance on line 194
 Function to connect with drawings collection line 205
 
-DIR variable is to get path to directory for stored images
+DIR variable is to get path to directory for stored images 
+
+For this project I chose speed and simplicity over a more robust solution and the following are the tradeoffs:
+
+No type checking on frontend, mongodriver,
+
+No Filestack bucket 
+
+No Linter
+
+No Input Sanitation
+
+No custom css
+
+Gains: 
+
+Mobile responsive design
+
+Lightweight
+
+Easy to expand upon
+
+Stylish
+
+Universal
+
+Easy to Use
+
+What I would really like to add are cypress tests, server tests and frontend tests in my next iteration.
+
 
