@@ -51,6 +51,3 @@ export default function HomePage(){
         </div>
     )
 }
-/**
- * Could add profile page
- */

@@ -17,8 +17,8 @@ export default function Options(props) {
                     <h5 className="card-title">Select color and width of pencil.</h5>
                     <p className="card-text">Click on the followint options.</p>
                     
-                    <div class="row">
-                        <div class="col">
+                    <div className="row">
+                        <div className="col">
                             {props.colors.map(({ color,rgba }) =>{
                                 return(
                                     <ul className="list-group" key={rgba.join(',')} onClick={e => changeColorValue({ color, rgba })}>
@@ -41,7 +41,7 @@ export default function Options(props) {
                                     
                             })}
                         </div>
-                        <div class="col">
+                        <div className="col">
                             {props.lineWidths.map((width) =>{
                                 return(
                                     <ul className="list-group" key={width} onClick={() => changeLineWidthValue(width)}>
@@ -51,7 +51,7 @@ export default function Options(props) {
                                     </ul>)
                                 })}
                         </div>
-                        <div class="col">
+                        <div className="col">
                                 <Eraser />
                         </div>
                     </div>    

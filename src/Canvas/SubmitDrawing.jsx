@@ -53,14 +53,14 @@ export default React.forwardRef(function SubmitDrawing(props, ref) {
                         <div className="col">
                         <form>
                             <div className="form-group">
-                                <label for="nameInput">Enter a name</label>
+                                <label htmlFor="nameInput">Enter a name</label>
                                 <input type="text" className="form-control" id="nameInput" placeholder="Name your drawing" onChange={e => handleName(e) }/>
                             </div>
                         </form>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col py-2">
+                    <div className="row">
+                        <div className="col py-2">
                             <div style={{padding: '1rem'}}>
                                 <button onClick={preparePublic} className="btn btn-primary">Public</button>
                             </div>
@@ -69,8 +69,8 @@ export default React.forwardRef(function SubmitDrawing(props, ref) {
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col py-2">
+                    <div className="row">
+                        <div className="col py-2">
                             <button className="btn btn-primary" onClick={(e) => handleSubmit(e)}>Post Your Drawing <span role="img" aria-label="thumbs-up">≈👍🏽</span></button>
                         </div>
                     </div>

@@ -98,16 +98,16 @@ export default function DrawingList() {
   }
   return (
     <div className="container-fluid">
-      <div class="row align-items-center">
-        <div class="col">
+      <div className="row align-items-center">
+        <div className="col">
           <h3>Your Private Drawings</h3>
         </div>
       </div>
       <div className="row">
         <DrawingsTable drawings={privateDrawings} showDeleteColumn={true} deleteDrawing={deleteDrawing} shareUrl={shareUrl} isPublic={false}/>
       </div>
-      <div class="row align-items-center">
-        <div class="col">
+      <div className="row align-items-center">
+        <div className="col">
           <h3>Your Public Drawings</h3>
         </div>
       </div>

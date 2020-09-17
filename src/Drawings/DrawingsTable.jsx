@@ -21,7 +21,6 @@ export default function DrawingsTable(props){
                 </thead>
                 <tbody>
                     {props.drawings.map(drawing =>{
-                        debugger
                         const isoToDate = dfns.parseISO(drawing.creationDate)      
                         const dateToSimpleFormat = dfns.format(isoToDate, 'MM/dd/yyyy')
                         return (
@@ -31,10 +30,10 @@ export default function DrawingsTable(props){
                                 <td>{drawing.email}</td>
                                 <td style={{width: '25%', height: '25%'}}><img src={`${drawing.src}`} className="img-fluid" alt="super awesome drawing" /></td>
                                 {props.showDeleteColumn 
-                                    ? <td><button type="button" class="btn btn-outline-danger" onClick={() => props.deleteDrawing({_id: drawing._id, isPrivate: drawing.isPrivate})}>Delete</button></td>
+                                    ? <td><button type="button" className="btn btn-outline-danger" onClick={() => props.deleteDrawing({_id: drawing._id, isPrivate: drawing.isPrivate})}>Delete</button></td>
                                     : null }
                                 { drawing.isPrivate 
-                                    ? <td><button type="button" class="btn btn-outline-warning" onClick={() => props.shareUrl({ _id: drawing._id })}>Share URL</button></td>
+                                    ? <td><button type="button" className="btn btn-outline-warning" onClick={() => props.shareUrl({ _id: drawing._id })}>Share URL</button></td>
                                     : null }
                             </tr>
                         )
