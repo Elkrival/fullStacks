@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DrawingsTable from './DrawingsTable';
+import { toast } from 'react-toastify';
 
 function DrawingList() {
   const [publicDrawings, setPublicDrawings] = useState([])
@@ -48,12 +49,23 @@ function DrawingList() {
             } else {
               getPublicDrawings()
             }
+        } else {
+          toast('🦄 There was a problem deleting your drawing.', {
+            position: toast.POSITION.BOTTOM_CENTER,
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            });
+            
         }
     })
 
   }
   return (
-    <div className="container">
+    <div className="container-fluid">
       <div class="row align-items-center">
         <div class="col">
           <h3>Your Private Drawings</h3>

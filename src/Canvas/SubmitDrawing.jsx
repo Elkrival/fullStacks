@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import * as dateFns from 'date-fns'
+import { toast } from 'react-toastify';
 
 export default React.forwardRef(function SubmitDrawing(props, ref) {
     const [imageData, setImageData] = useState();
@@ -19,7 +20,18 @@ export default React.forwardRef(function SubmitDrawing(props, ref) {
             }
         }
         fetch('http://localhost:8080/api/save-drawing', options).then(res => res.json()).then(data => {
-            return data
+            if(data.error) {
+                toast('🦄 There was a problem saving your art.', {
+                    position: toast.POSITION.BOTTOM_CENTER,
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    });
+                    
+            }
         })
     }
     const preparePrivate = () =>{

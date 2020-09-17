@@ -1,4 +1,5 @@
 import React, { useState, useReducer } from 'react';
+import { toast } from 'react-toastify';
 import DrawingList from '../Drawings/DrawingList';
 import DrawingPad from '../Canvas/DrawingPad';
 
@@ -24,13 +25,14 @@ function Main() {
     }
   return (
     <div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="col">
-                <div class="row">
-                    <div class="col">
+                <div className="row">
+                    <div className="col">
                         <button onClick={() => showGallery()} type="submit" className="btn btn-primary">Gallery</button>
                     </div>
-                    <div class="col">
+                    <div className="col">
                         <button onClick={() => createDrawing()} type="submit" className="btn btn-primary">Make More</button>
                     </div>
                 </div>

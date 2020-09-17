@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function Register(){
     const history = useHistory()
@@ -24,15 +25,23 @@ export default function Register(){
             if(data.token) {
                 localStorage.setItem('token', data.token);
                 return history.push('/main-page')
+            } else {
+                toast.error('🦄 There was a problem registering.',{
+                    position: toast.POSITION.BOTTOM_CENTER,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });  
             }
-         
         })
     }
     const returnToLogin = () =>{
         return history.push('/')
     }
     return(
-        <div className="container">
+        <div className="container-fluid">
   <div className="row">
     <div className="col">
     <h1 className="display-4"> Register a new account</h1>

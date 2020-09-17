@@ -7,6 +7,7 @@ import bcrypt from 'bcrypt';
 import { writeFile, unlink, stat } from 'fs/promises'
 import { fileURLToPath, pathToFileURL } from 'url';
 import { default as mongodb } from 'mongodb';
+import { resolveSoa } from 'dns';
 const saltRounds = 10;
 
 dotenv.config()
@@ -20,14 +21,6 @@ const app = express()
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: true}));
 app.use(cors());
-
-app.get(`/api`, async(req,res) =>{
-    try {
-        return res.json({ message: "We are in."})
-    } catch (error) {
-        return res.json({ message: e.message })
-    }
-})
 
 app.post(`/api/login`, async(req,res) =>{
     const { email, password } = req.body
@@ -62,7 +55,6 @@ app.post(`/api/register`, async(req,res) =>{
         return res.json({ message: e.message })
     }
     async function insertUser() {
-
         const DB_CLIENT = await startDB();
         const db = await DB_CLIENT.db('drawings')
         const collection = db.collection('users')
@@ -76,10 +68,10 @@ app.get('/api/user-public-drawings', authenticateToken, async(req, res) =>{
     try {
         const { email } = req.user
         const drawings = await getUserDrawings(email, false)
-        return res.status(200).json({drawings })
-    } catch (error) {
-        console.error(error.stack)
-        return res.status(401).json({ message: error.message })
+        return res.status(200).json({ drawings })
+    } catch (e) {
+        console.error(e.stack)
+        return res.status(401).json({ message: e.message, error: true })
     }
 })
 app.get('/api/user-private-drawings', authenticateToken, async(req, res) =>{
@@ -87,9 +79,9 @@ app.get('/api/user-private-drawings', authenticateToken, async(req, res) =>{
         const { email } = req.user
         const drawings = await getUserDrawings(email, true)
         return res.status(200).json({drawings })
-    } catch (error) {
+    } catch (e) {
         console.error(error.stack)
-        return res.status(401).json({ message: error.message })
+        return res.status(401).json({ message: e.message, error: true })
     }
 })
 app.delete('/api/delete-drawing/:_id', authenticateToken, async(req,res) =>{
@@ -98,7 +90,7 @@ app.delete('/api/delete-drawing/:_id', authenticateToken, async(req,res) =>{
         return result
     } catch (error) {
         console.error(error.stack)
-        return res.status(400).json({ message: "There was an internal problem."})
+        return res.status(400).json({ message: "There was an internal problem.", deleted: false })
     }
     async function deleteUserDrawing(){
         const { _id } = req.params;
@@ -143,9 +135,9 @@ app.post('/api/save-drawing',authenticateToken, async(req, res) => {
                 if (drawing.result.ok === 1) {
                     return res.status(200).json({ message: "Drawing added." })
                 }
-                return res.status(400).json({ message: "There is a problem."})
+                return res.status(400).json({ message: "There is a problem.", error: true})
             } else {
-                return res.status(400).json({ message: "Image not in the right format"})
+                return res.status(400).json({ message: "Image not in the right format", error: true},)
             }
         } catch(e) {
             console.error(e.stack)
@@ -159,7 +151,8 @@ app.use(async(err, req, res, next) => {
   
     return res.status(err.statusCode).json({
       status: err.status,
-      message: err.message
+      message: err.message,
+      error: true
     });
 });
 function authenticateToken(req, res, next) {

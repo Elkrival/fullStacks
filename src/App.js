@@ -4,14 +4,16 @@ import {
   Switch,
   Route
 } from "react-router-dom";
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
+
 import Login from './Auth/Login';
 import Register from './Auth/Register';
 import Main from './MainPage/Main';
-import './App.css';
 
 function App() {
   return (
-    <div className="App">
+    <div className="container-fluid">
       <Router>
       <Switch>
         <Route exact path="/"component={Login} />
@@ -19,6 +21,7 @@ function App() {
         <Route exact path="/main-page"component={Main} />
       </Switch>
       </Router>
+      <ToastContainer />
     </div>
   );
 }

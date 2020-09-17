@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function Login(){
     const history = useHistory()
@@ -26,6 +27,16 @@ export default function Login(){
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('email', data.user.email)
                 return history.push('/main-page')
+            } else {
+                toast.error('🦄 There was a problem logging in.', {
+                    position: toast.POSITION.BOTTOM_CENTER,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    });
+                    
             }
         })
     }
@@ -34,51 +45,32 @@ export default function Login(){
         return history.push('/register-user')
     }
     return(
-        <div className="container">
-  <div className="row">
-    <div className="col">
-    <h1 className="display-4">Login to the Ultimate Drawing Pad</h1>
-    </div>
-  </div>
-      &nbsp;
-  <div className="row">
-    <div className="col">
-    </div>
-    <div className="col">
-        <form>
-            <div className="form-group">
-                <label htmlFor="emailInput">Email address</label>
-                <input onChange={(e) => handleEmail(e)} type="email" className="form-control" id="emailInput" aria-describedby="emailHelp" placeholder="Enter email" />
-                <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
-            </div>
-            <div className="form-group row">
-                <label htmlFor="password">Password</label>
-                <input onChange={(e) => handlePassword(e)} type="password" className="form-control" id="password" placeholder="Password"/>
-            </div>
-            <div className="form-check row">
-                <input type="checkbox" className="form-check-input" id="rememberCheck" />
-                <label className="form-check-label" htmlFor="rememberMe">Remember Me</label>
-            </div>
-            <div className="row">
-                <div className="col">
-                        <button  className="btn btn-primary" onClick={(e) => routeToRegister(e)} >Register</button>          
-                </div>
-                <div className="col">
-                        <button className="btn btn-primary" onClick={(e) => handleLogin(e)}>Submit</button>       
+        <div className="container-fluid">
+            <div className="row justify-content-md-center">
+                <div className="col col-lg-6">
+                    <form>
+                        <h6 className="display-4 text-align-center">Ultimate Drawing Pad</h6>
+                        <div className="form-group">
+                            <label htmlFor="emailInput">Email address</label>
+                            <input onChange={(e) => handleEmail(e)} type="email" className="form-control" id="emailInput" aria-describedby="emailHelp" placeholder="Enter email" />
+                            <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
+                        </div>
+                        <div className="form-group row">
+                            <label htmlFor="password">Password</label>
+                            <input onChange={(e) => handlePassword(e)} type="password" className="form-control" id="password" placeholder="Password"/>
+                        </div>
+                        <div className="row">
+                            <div className="col">
+                                    <button  className="btn btn-primary" onClick={(e) => routeToRegister(e)} >Register</button>          
+                            </div>
+                            <div className="col">
+                                    <button className="btn btn-primary" onClick={(e) => handleLogin(e)}>Submit</button>       
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </form>
-    </div>
-    <div className="col">
-    </div>
-    <div className="row">
-    <div className="col">
-    </div>
-    <div className="col">
-    </div>
-  </div>
-  </div>
-</div>
+        </div>
 
     )
 }

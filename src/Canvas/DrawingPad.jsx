@@ -36,7 +36,7 @@ export default function DrawingPad(props){
     const [state, dispatch] = useReducer(reducer, initialState);
     const getCanvas = () => { return canvasRef.current }
     return(
-        <div className="container">
+        <div className="container-fluid">
             <div className="row">
                 <div className="col">
                 <h1>Start Your Draws, Get Set Go</h1>
