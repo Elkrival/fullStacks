@@ -13,10 +13,15 @@ export default function HomePage(){
         getHomePageDrawings()
     }, [])
     const getHomePageDrawings = () =>{
-        fetch('home-page').then(res => res.json()).then(data =>{
-            if(data.drawings) {
-                setDrawings(drawings)
-                debugger;
+        const options = {
+            method: 'GET',
+            headers: {
+              'Content-Type': "application/json",
+            }
+          }
+        fetch('home-page', options).then(res => res.json()).then(data =>{
+            if(data.success) {
+                setDrawings(data.drawings)
             } else {
                 toast.error('🦄 There was a problem looking....', {
                     position: toast.POSITION.BOTTOM_CENTER,

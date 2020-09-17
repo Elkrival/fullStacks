@@ -26,7 +26,7 @@ export default function Login(){
             if(data.user) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('email', data.user.email)
-                return history.push('/main-page')
+                return history.push('/home-page')
             } else {
                 toast.error('🦄 There was a problem logging in.', {
                     position: toast.POSITION.BOTTOM_CENTER,
