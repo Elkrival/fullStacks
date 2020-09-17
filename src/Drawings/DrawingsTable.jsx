@@ -11,7 +11,9 @@ export default function DrawingsTable(props){
                         <th scope="col">Total Drawing Time in Seconds</th>
                         <th scope="col">User</th>
                         <th scope="col">Thumbnail</th>
-                        <th scope="col">Delete</th>
+                        {props.showDeleteColumn 
+                        ? <th scope="col">Delete</th>
+                        : null}
                         {props.isPublic 
                             ? null
                             : <th scope="col">Share URL</th>}

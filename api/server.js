@@ -20,6 +20,27 @@ app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: true}));
 app.use(cors());
 
+app.get('/api/home-page', async(req, res) =>{
+    try {
+        const result = await getHomePageDrawings;
+        return result
+    } catch (error) {
+        console.error(error.stack)
+        return res.status(500).json({ message: error.message, success: false })
+    }
+    async function getHomePageDrawings() {
+        const DB_CLIENT = await startDB();
+        const db = await DB_CLIENT.db('drawings')
+        const drawings = db.collection('drawings')
+        const getDrawings = await drawings.find({}).toArray();
+        
+        if(getDrawings.result.ok === 1) {
+            return res.status(200).json({ drawings: getDrawings})
+        } else {
+            return res.status(500).json({ success: false })
+        }
+    }
+})
 app.post(`/api/login`, async(req,res) =>{
     const { email, password } = req.body
     try {

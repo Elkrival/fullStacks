@@ -1,12 +1,14 @@
 import React, { useState, useReducer, useEffect } from 'react';
 import DrawingList from '../Drawings/DrawingList';
 import DrawingPad from '../Canvas/DrawingPad';
+import { useHistory } from 'react-router-dom';
 
 export const DrawingListContext = React.createContext();
 const initialState = {
     drawings: [{ src: 'image goes here' }],
 }
-function Main() {
+function MemberPage() {
+    const history = useHistory();
     const [state, dispatch] = useReducer(reducer, initialState)
     const [creationDate, setCreationDate ] = useState('')
     const [showPad, setShowPad] = useState(false);
@@ -27,6 +29,9 @@ function Main() {
           }
           return <DrawingList />;
     }
+    const goToHomePage = () =>{
+        return history.push('/home-page')
+    }
   return (
     <div>
 
@@ -41,6 +46,9 @@ function Main() {
                     </div>
                     <div className="col col-md-3">
                         <button onClick={() => createDrawing()} type="submit" className="btn btn-primary">Make More</button>
+                    </div>
+                    <div className="col col-md-3">
+                        <button onClick={() => goToHomePage()} type="submit" className="btn btn-primary">Home Page</button>
                     </div>
                 </div>
             </div>
@@ -60,4 +68,4 @@ function reducer(state, action) {
     }
 }
 
-export default Main;
+export default MemberPage;

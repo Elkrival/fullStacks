@@ -104,7 +104,7 @@ export default function DrawingList() {
         </div>
       </div>
       <div className="row">
-        <DrawingsTable drawings={privateDrawings} deleteDrawing={deleteDrawing} shareUrl={shareUrl} isPublic={false}/>
+        <DrawingsTable drawings={privateDrawings} showDeleteColumn={true} deleteDrawing={deleteDrawing} shareUrl={shareUrl} isPublic={false}/>
       </div>
       <div class="row align-items-center">
         <div class="col">
@@ -112,7 +112,7 @@ export default function DrawingList() {
         </div>
       </div>
       <div className="row">
-        <DrawingsTable drawings={publicDrawings} deleteDrawing={deleteDrawing} isPublic={true}/>
+        <DrawingsTable drawings={publicDrawings} showDeleteColumn={true} deleteDrawing={deleteDrawing} isPublic={true}/>
       </div>
        
     </div>

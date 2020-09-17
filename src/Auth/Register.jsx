@@ -24,7 +24,8 @@ export default function Register(){
         return fetch("register", options).then(res => res.json()).then(data => {
             if(data.token) {
                 localStorage.setItem('token', data.token);
-                return history.push('/main-page')
+                localStorage.setItem('email', email)
+                return history.push('/home-page')
             } else {
                 toast.error('🦄 There was a problem registering.',{
                     position: toast.POSITION.BOTTOM_CENTER,
